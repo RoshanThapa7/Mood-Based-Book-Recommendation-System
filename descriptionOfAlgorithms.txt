@@ -1,0 +1,110 @@
+### Description of Algorithms
+
+#### a. Explanation of Pre-/Post-Processing Algorithms
+
+##### Pre-Processing Steps:
+
+1. **Facial and Hand Landmark Detection**:
+   - **Algorithm**: MediaPipe Holistic
+   - **Working Mechanism**: MediaPipe Holistic is a machine learning-based pipeline that provides real-time tracking of facial and hand landmarks. It uses a convolutional neural network (CNN) to detect and track specific points (landmarks) on the face and hands in a video feed.
+     - **Input**: RGB frames from the webcam.
+     - **Process**: 
+       - The frame is converted from BGR to RGB.
+       - MediaPipe processes the frame to detect landmarks.
+       - It outputs the (x, y) coordinates of landmarks relative to the image dimensions.
+     - **Output**: A set of normalized (x, y) coordinates for face and hand landmarks.
+
+2. **Normalization and Feature Extraction**:
+   - **Algorithm**: Landmark Normalization
+   - **Working Mechanism**: The coordinates of landmarks are normalized relative to a reference point (e.g., nose for face, index finger tip for hands) to make the data invariant to the user's position and scale in the frame.
+     - **Input**: Raw (x, y) coordinates from MediaPipe.
+     - **Process**: 
+       - Calculate the difference between each landmark and the reference landmark.
+       - Normalize the coordinates to account for variations in size and position.
+     - **Output**: Normalized feature vector representing the user's facial and hand landmarks.
+
+##### Post-Processing Steps:
+
+1. **Emotion Prediction**:
+   - **Algorithm**: Feedforward Neural Network (FNN)
+   - **Working Mechanism**: The pre-processed feature vector is fed into a trained FNN model, which outputs the predicted emotion.
+     - **Input**: Normalized feature vector.
+     - **Process**: 
+       - The feature vector is passed through multiple dense layers with ReLU activation.
+       - The final layer uses softmax activation to output a probability distribution over the emotion classes.
+     - **Output**: The emotion label with the highest probability.
+
+#### b. Flowcharts and Pseudo-Codes
+
+##### Pre-Processing Flowchart:
+1. **Capture Frame**: 
+   - Input frame from webcam.
+2. **Convert Frame to RGB**:
+   - Convert BGR to RGB.
+3. **Detect Landmarks**:
+   - Use MediaPipe Holistic to detect face and hand landmarks.
+4. **Normalize Landmarks**:
+   - Normalize landmarks relative to a reference point.
+5. **Form Feature Vector**:
+   - Concatenate normalized coordinates into a feature vector.
+
+##### Pseudo-Code for Pre-Processing:
+
+```python
+# Pre-processing pseudo-code
+import cv2
+import mediapipe as mp
+
+# Initialize MediaPipe Holistic
+holistic = mp.solutions.holistic.Holistic()
+
+# Capture frame from webcam
+cap = cv2.VideoCapture(0)
+_, frame = cap.read()
+
+# Convert frame to RGB
+frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+# Process frame to get landmarks
+results = holistic.process(frame_rgb)
+
+# Normalize landmarks if detected
+feature_vector = []
+if results.face_landmarks:
+    ref_point = results.face_landmarks.landmark[1]  # Example: Nose
+    for landmark in results.face_landmarks.landmark:
+        feature_vector.append(landmark.x - ref_point.x)
+        feature_vector.append(landmark.y - ref_point.y)
+
+# Close capture
+cap.release()
+```
+
+##### Post-Processing Flowchart:
+1. **Input Feature Vector**:
+   - Load feature vector into the model.
+2. **Predict Emotion**:
+   - Feed feature vector into the trained FNN.
+3. **Output Emotion Label**:
+   - Display the predicted emotion label.
+
+##### Pseudo-Code for Post-Processing:
+
+```python
+# Post-processing pseudo-code
+import numpy as np
+from keras.models import load_model
+
+# Load trained model and labels
+model = load_model("model.h5")
+labels = np.load("labels.npy")
+
+# Predict emotion from feature vector
+predicted_label = model.predict(feature_vector)
+emotion = labels[np.argmax(predicted_label)]
+
+# Output emotion
+print("Predicted Emotion:", emotion)
+```
+
+These steps and pseudo-codes demonstrate the flow from capturing video input, extracting and normalizing features, to predicting the emotion using a neural network model.

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Moods and Ratings</title>
+    <style>
+        .book-list {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .book-item {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+            text-align: center;
+        }
+        .book-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Previous Moods and Ratings</h1>
+
+    <div class="book-list" id="book-list">
+        {% for item in previous_recommendations %}
+            <div class="book-item">
+                <img src="{{ item.books[0].image_url }}" alt="{{ item.books[0].title }}">
+                <strong>{{ item.books[0].title }}</strong>
+                <p>Mood: {{ item.mood }}</p>
+                {% if item.books[0].rating %}
+                    <p>Rating: {{ item.books[0].rating }}</p>
+                {% endif %}
+            </div>
+            {% if item.books|length > 1 %}
+                <div class="book-item">
+                    <img src="{{ item.books[1].image_url }}" alt="{{ item.books[1].title }}">
+                    <strong>{{ item.books[1].title }}</strong>
+                    <p>Mood: {{ item.mood }}</p>
+                    {% if item.books[1].rating %}
+                        <p>Rating: {{ item.books[1].rating }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</body>
+</html>
