@@ -3,54 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Previous Moods and Ratings</title>
+    <title>Previous Moods and Recommendations</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .mood-percentages {
+            margin-bottom: 20px;
+        }
+        .mood-percentages h2 {
+            margin-bottom: 10px;
+        }
+        .mood-percentages ul {
+            list-style: none;
+            padding: 0;
+        }
+        .mood-percentages li {
+            margin-bottom: 5px;
+        }
         .book-list {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .book-list h2 {
+            margin-bottom: 10px;
+        }
+        .book-list ul {
+            list-style: disc;
+            padding-left: 20px;
         }
         .book-item {
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 200px;
-            text-align: center;
-        }
-        .book-item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>Previous Moods and Ratings</h1>
+    <h1>Previous Moods and Book Recommendations</h1>
 
-    <div class="book-list" id="book-list">
-        {% for item in previous_recommendations %}
-            <div class="book-item">
-                <img src="{{ item.books[0].image_url }}" alt="{{ item.books[0].title }}">
-                <strong>{{ item.books[0].title }}</strong>
-                <p>Mood: {{ item.mood }}</p>
-                {% if item.books[0].rating %}
-                    <p>Rating: {{ item.books[0].rating }}</p>
-                {% endif %}
-            </div>
-            {% if item.books|length > 1 %}
-                <div class="book-item">
-                    <img src="{{ item.books[1].image_url }}" alt="{{ item.books[1].title }}">
-                    <strong>{{ item.books[1].title }}</strong>
-                    <p>Mood: {{ item.mood }}</p>
-                    {% if item.books[1].rating %}
-                        <p>Rating: {{ item.books[1].rating }}</p>
-                    {% endif %}
-                </div>
-            {% endif %}
-        {% endfor %}
+    <div class="mood-percentages">
+        <h2>Mood Percentages:</h2>
+        <ul>
+            {% for mood, percentage in mood_percentages.items() %}
+                <li>{{ mood }}: {{ percentage|round(2) }}%</li>
+            {% endfor %}
+        </ul>
+        {% if mood_percentages %}
+            <p>{{ username }} is mostly {{ dominant_mood }}.</p>
+        {% endif %}
     </div>
 
+    <div class="book-list">
+        <h2>All Recommended Books:</h2>
+        <ul>
+            {% for book in all_books %}
+                <li class="book-item">{{ book.title }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>

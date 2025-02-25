@@ -56,10 +56,10 @@ op = Dense(len(label), activation="softmax")(m) # Ensure the final layer has cor
 model = Model(inputs=ip, outputs=op)
 
 # Compile the model
-model.compile(optimizer='rmsprop', loss="categorical_crossentropy", metrics=['accuracy'])
+model.compile(optimizer='adam', loss="categorical_crossentropy", metrics=['accuracy'])
 
 # Train the model
-model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=50)
+model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100)
 
 # Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test)
